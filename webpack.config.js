@@ -73,7 +73,7 @@ module.exports = {
       template: './src/index.html',
       inject: true,
     }),
-    new Dotenv(),
+    new Dotenv(), // .env 파일 로드
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
     }),

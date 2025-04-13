@@ -20,7 +20,10 @@ const Toolbar: React.FC<ToolbarProps> = ({
   const shownTools = selectedTool === 'shape-tool' ? shapes : [];
 
   return (
-    <div className="shapes-panel">
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 
+                    bg-gradient-to-b from-gray-800/95 to-gray-900/95
+                    backdrop-blur-xl rounded-full border border-white/10 
+                    shadow-lg p-2 flex gap-2 z-50">
       <div className="shapes-grid">
         {shownTools.map(shape => (
           <button

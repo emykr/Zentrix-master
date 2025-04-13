@@ -1,5 +1,6 @@
 import React from 'react';
 import { keyboardManager } from '@utils/KeyboardManager';
+import { t } from '@utils/LangLoader';
 
 interface KeyboardShortcutsProps {
   shortcuts: Array<{
@@ -14,7 +15,7 @@ const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({ shortcuts }) => {
 
   return (
     <div className="keyboard-shortcuts-panel">
-      <h3 className="panel-title">단축키 목록</h3>
+      <h3 className="panel-title">{t('shortcuts.title')}</h3>
       <div className="shortcuts-grid">
         {commands.map(command => (
           <div key={command.key} className="shortcut-item">
@@ -28,7 +29,7 @@ const KeyboardShortcuts: React.FC<KeyboardShortcutsProps> = ({ shortcuts }) => {
                 .filter(Boolean)
                 .join('+')}
             </span>
-            <span className="shortcut-description">{command.description}</span>
+            <span className="shortcut-description">{t(`shortcuts.${command.key}.description`)}</span>
           </div>
         ))}
       </div>

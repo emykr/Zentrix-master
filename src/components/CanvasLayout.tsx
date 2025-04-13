@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ZentrixCanvas from '@components/ZentrixCanvas';
 import ToolbarLeft from '@components/toolbar/ToolbarLeft';
 import ComponentPanel from '@components/ComponentPanel';
-import type { Design } from '@/types/zentrix';
+import type { Design } from '@/types';
 
 interface CanvasLayoutProps {
   design: Design;

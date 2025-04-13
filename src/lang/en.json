@@ -27,16 +27,37 @@
     "complete": "Bootstrap complete",
     "error": "Bootstrap failed"
   },
+  "init": {
+    "loadingConfig": "Loading configuration...",
+    "initializing": "Initializing...",
+    "checkingServerConnection": "Checking server connection...",
+    "checkingServerStatus": "Checking server status...",
+    "serverConnectionFailed": "Server connection failed",
+    "initializationComplete": "Initialization complete"
+  },
   "menu": {
     "file": {
       "new": "New",
-      "open": "Open",
+      "open": "Open...",
       "save": "Save",
-      "saveAs": "Save As",
-      "export": "Export"
+      "export": "Export..."
     },
-    "context": {
-      "editStyle": "Edit Text Style"
+    "edit": {
+      "undo": "Undo",
+      "redo": "Redo",
+      "cut": "Cut",
+      "copy": "Copy",
+      "paste": "Paste"
+    },
+    "view": {
+      "zoomIn": "Zoom In",
+      "zoomOut": "Zoom Out",
+      "fitToScreen": "Fit to Screen",
+      "actualSize": "Actual Size"
+    },
+    "help": {
+      "shortcuts": "Shortcuts",
+      "about": "About"
     }
   },
   "dialog": {
@@ -46,5 +67,29 @@
       "create": "Create",
       "cancel": "Cancel"
     }
+  },
+  "layerPanel": {
+    "title": "Layers",
+    "show": "Show",
+    "hide": "Hide",
+    "group": "Group",
+    "moveUp": "Move Up",
+    "moveDown": "Move Down"
+  },
+  "loadingScreen": {
+    "serverStatus": "Server Status",
+    "checking": "Checking",
+    "online": "Online",
+    "offline": "Offline"
+  },
+  "serverStatus": {
+    "online": "Online",
+    "offline": "Offline",
+    "checking": "Checking"
+  },
+  "serverNames": {
+    "Fonts": "Fonts Server",
+    "API": "API Server",
+    "Download": "Download Server"
   }
 }

@@ -1,11 +1,16 @@
+import type { 
+  Design, Shape, Point, Size, ConnectorPoint, 
+  ConnectorShape, ShapeStyle, ConnectorStyle, Port 
+} from '@/types/zentrix';
+
 import { v4 as uuidv4 } from 'uuid';
 
 export const createShape = (
-  type: ZentrixShape['type'],
+  type: Shape['type'],
   position: Point,
   size: Size,
-  options: Partial<Pick<ZentrixShape, 'text' | 'style' | 'transform'>> = {}
-): ZentrixShape => {
+  options: Partial<Pick<Shape, 'text' | 'style' | 'transform'>> = {}
+): Shape => {
   // 기본 스타일 설정
   const defaultStyle: ShapeStyle = {
     fill: '#ffffff',
@@ -40,13 +45,13 @@ export const createShape = (
 };
 
 export const updateShape = (
-  design: ZentrixDesign,
+  design: Design,
   shapeId: string,
-  updates: Partial<ZentrixShape>
-): ZentrixDesign => {
+  updates: Partial<Shape>
+): Design => {
   return {
     ...design,
-    shapes: design.shapes.map(shape =>
+    shapes: design.shapes.map((shape: Shape) =>
       shape.id === shapeId
         ? { ...shape, ...updates }
         : shape
@@ -55,46 +60,46 @@ export const updateShape = (
 };
 
 export const deleteShape = (
-  design: ZentrixDesign,
+  design: Design,
   shapeId: string
-): ZentrixDesign => {
+): Design => {
   return {
     ...design,
-    shapes: design.shapes.filter(shape => shape.id !== shapeId)
+    shapes: design.shapes.filter((shape: Shape) => shape.id !== shapeId)
   };
 };
 
 export const moveShape = (
-  design: ZentrixDesign,
+  design: Design,
   shapeId: string,
   deltaX: number,
   deltaY: number
-): ZentrixDesign => {
+): Design => {
   return updateShape(design, shapeId, {
     position: {
-      x: design.shapes.find(s => s.id === shapeId)!.position.x + deltaX,
-      y: design.shapes.find(s => s.id === shapeId)!.position.y + deltaY
+      x: design.shapes.find((s: Shape) => s.id === shapeId)!.position.x + deltaX,
+      y: design.shapes.find((s: Shape) => s.id === shapeId)!.position.y + deltaY
     }
   });
 };
 
 export const resizeShape = (
-  design: ZentrixDesign,
+  design: Design,
   shapeId: string,
   width: number,
   height: number
-): ZentrixDesign => {
+): Design => {
   return updateShape(design, shapeId, {
     size: { width, height }
   });
 };
 
 export const rotateShape = (
-  design: ZentrixDesign,
+  design: Design,
   shapeId: string,
   angle: number
-): ZentrixDesign => {
-  const shape = design.shapes.find(s => s.id === shapeId)!;
+): Design => {
+  const shape = design.shapes.find((s: Shape) => s.id === shapeId)!;
   return updateShape(design, shapeId, {
     transform: {
       ...shape.transform,
@@ -129,9 +134,11 @@ export const createConnector = (
   } as ConnectorShape;
 };
 
-export const getPortPosition = (shape: ZentrixShape, portId: string): Point => {
-  const port = shape.ports?.find(p => p.id === portId);
-  if (!port) return { x: 0, y: 0 };
+export const getPortPosition = (shape: Shape, portId: string): Point => {
+  const port = shape.ports?.find((p: Port) => p.id === portId);
+  if (!port) {
+    throw new Error(`Port with ID ${portId} not found in shape ${shape.id}`);
+  }
 
   const offset = port.offset || 0.5;
   
@@ -195,7 +202,7 @@ export const calculateConnectorPath = (
   ];
 };
 
-export const addDefaultPorts = (shape: ZentrixShape): ZentrixShape => {
+export const addDefaultPorts = (shape: Shape): Shape => {
   if (shape.type === 'connector') return shape;
   
   return {

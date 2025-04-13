@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import { config } from './config.mjs';  // .mjs로 변경
 
 const app = express();
 
@@ -11,8 +10,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.listen(config.ports.api, () => {
-  console.log(`API server running on port ${config.ports.api}`);
+const PORT = 3002; // API 서버 포트
+app.listen(PORT, () => {
+  console.log(`API server running on port ${PORT}`);
 });
 
 export default app;

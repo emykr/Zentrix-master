@@ -30,13 +30,26 @@
   "menu": {
     "file": {
       "new": "새로 만들기",
-      "open": "열기",
+      "open": "열기...",
       "save": "저장",
-      "saveAs": "다른 이름으로 저장",
-      "export": "내보내기"
+      "export": "내보내기..."
     },
-    "context": {
-      "editStyle": "텍스트 모양 편집"
+    "edit": {
+      "undo": "실행 취소",
+      "redo": "다시 실행",
+      "cut": "잘라내기",
+      "copy": "복사",
+      "paste": "붙여넣기"
+    },
+    "view": {
+      "zoomIn": "확대",
+      "zoomOut": "축소",
+      "fitToScreen": "화면에 맞추기",
+      "actualSize": "실제 크기"
+    },
+    "help": {
+      "shortcuts": "단축키 안내",
+      "about": "버전 정보"
     }
   },
   "dialog": {
@@ -46,5 +59,37 @@
       "create": "만들기",
       "cancel": "취소"
     }
+  },
+  "layerPanel": {
+    "title": "레이어",
+    "show": "보이기",
+    "hide": "숨기기",
+    "group": "그룹",
+    "moveUp": "위로 이동",
+    "moveDown": "아래로 이동"
+  },
+  "init": {
+    "loadingConfig": "설정을 로드 중...",
+    "initializing": "초기화 중...",
+    "checkingServerConnection": "서버 연결 확인 중...",
+    "checkingServerStatus": "서버 상태 확인 중...",
+    "serverConnectionFailed": "서버 연결 실패",
+    "initializationComplete": "초기화 완료"
+  },
+  "loadingScreen": {
+    "serverStatus": "서버 상태",
+    "checking": "확인 중",
+    "online": "온라인",
+    "offline": "오프라인"
+  },
+  "serverStatus": {
+    "online": "온라인",
+    "offline": "오프라인",
+    "checking": "확인 중"
+  },
+  "serverNames": {
+    "Fonts": "폰트 서버",
+    "API": "API 서버",
+    "Download": "다운로드 서버"
   }
 }

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FaBold, FaItalic, FaUnderline, FaAlignLeft, FaAlignCenter, FaAlignRight } from 'react-icons/fa';
+import type { Point, Size, ShapeStyle } from '@/types/zentrix';
 
 interface TextEditorProps {
   text: string;
@@ -28,7 +29,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
   }, []);
 
   const handleStyleChange = (updates: Partial<ShapeStyle>) => {
-    setCurrentStyle(prev => ({
+    setCurrentStyle((prev: ShapeStyle) => ({
       ...prev,
       ...updates
     }));

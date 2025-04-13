@@ -6,9 +6,9 @@ import { fileURLToPath } from 'url';
 import history from 'connect-history-api-fallback';
 import fs from 'fs/promises';
 import rateLimit from 'express-rate-limit';
-import { config } from './config';
+import { config } from '../utils/config'; 
 
-const __filename = fileURLToPath(import.meta.url);
+const __filename = path.resolve();
 const __dirname = path.dirname(__filename);
 
 const app = express();

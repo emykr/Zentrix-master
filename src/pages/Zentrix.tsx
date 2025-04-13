@@ -1,17 +1,18 @@
-import React, { useState, useCallback, useEffect, Suspense } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { NewDesignDialog } from '@components/NewDesignDialog';
 import { createShape, moveShape, rotateShape, updateShape, addDefaultPorts } from '@utils/DesignUtils';
 import { keyboardManager } from '@utils/KeyboardManager';
 import { withInitialization } from '@core/withInitialization';
 import { t } from '@utils/LangLoader';
 import { getIconById } from '@utils/IconLoader';
+import type { Design, Shape, Zentrix } from '@/types/zentrix';
 
-const LayerPanel = React.lazy(() => import('@components/LayerPanel'));
-const MenuBar = React.lazy(() => import('@components/MenuBar'));
-const ComponentPanel = React.lazy(() => import('@components/ComponentPanel'));
-const Toolbar = React.lazy(() => import('@components/Toolbar'));
-const KeyboardShortcuts = React.lazy(() => import('@components/KeyboardShortcuts'));
-const ZentrixCanvas = React.lazy(() => import('@components/ZentrixCanvas'));
+import LayerPanel from '@components/LayerPanel';
+import MenuBar from '@components/MenuBar';
+import ComponentPanel from '@components/ComponentPanel';
+import Toolbar from '@components/Toolbar';
+import KeyboardShortcuts from '@components/KeyboardShortcuts';
+import ZentrixCanvas from '@components/ZentrixCanvas';
 
 const LoadingComponent = () => (
   <div className="flex items-center justify-center p-4">
@@ -20,7 +21,7 @@ const LoadingComponent = () => (
 );
 
 const Zentrix: React.FC = () => {
-  const [design, setDesign] = useState<ZentrixDesign>({
+  const [design, setDesign] = useState<Design>({
     id: 'demo-1',
     name: 'Zentrix Demo',
     canvas: {
@@ -68,14 +69,14 @@ const Zentrix: React.FC = () => {
     };
 
     const newShape = createShape(
-      icon.category === 'shape' ? componentId as ZentrixShape['type'] : 'rectangle',
+      icon.category === 'shape' ? componentId as Zentrix.Shape['type'] : 'rectangle',
       { x: center.x - 50, y: center.y - 50 },
       { width: 100, height: 100 }
     );
 
-    setDesign(prev => ({
+    setDesign((prev: Design) => ({
       ...prev,
-      shapes: [...prev.shapes, newShape as ZentrixShape]
+      shapes: [...prev.shapes, newShape as Shape]
     }));
     
     // 새 도형 생성 후 자동으로 선택
@@ -98,17 +99,17 @@ const Zentrix: React.FC = () => {
       };
 
       const newShape = createShape(
-        toolId as ZentrixShape['type'],
+        toolId as Shape['type'],
         center,
         { width: 100, height: 100 }
       );
 
-      setDesign(prev => ({
+      setDesign((prev: { shapes: any; }) => ({
         ...prev,
         shapes: [...prev.shapes, addDefaultPorts(newShape)]
       }));
       setSelectedShapeId(newShape.id);
-      setSelectedTool('select');  // 도형 생성 후 선택 도구로 변경
+      setSelectedTool('select');  // 도형 생성 후 선택 도구 변경
     } else if (toolId === 'text') {
       const center = {
         x: design.canvas.width / 2 - 75,
@@ -122,7 +123,7 @@ const Zentrix: React.FC = () => {
         { text: t('common.enterText') }
       );
 
-      setDesign(prev => ({
+      setDesign((prev: { shapes: any; }) => ({
         ...prev,
         shapes: [...prev.shapes, addDefaultPorts(newShape)]
       }));
@@ -141,30 +142,30 @@ const Zentrix: React.FC = () => {
 
     switch (e.key) {
       case 'ArrowLeft':
-        setDesign(prev => moveShape(prev, selectedShapeId, -10, 0));
+        setDesign((prev: any) => moveShape(prev, selectedShapeId, -10, 0));
         setLastAction({ type: 'move', payload: { dx: -10, dy: 0 } });
         break;
       case 'ArrowRight':
-        setDesign(prev => moveShape(prev, selectedShapeId, 10, 0));
+        setDesign((prev: any) => moveShape(prev, selectedShapeId, 10, 0));
         setLastAction({ type: 'move', payload: { dx: 10, dy: 0 } });
         break;
       case 'ArrowUp':
-        setDesign(prev => moveShape(prev, selectedShapeId, 0, -10));
+        setDesign((prev: any) => moveShape(prev, selectedShapeId, 0, -10));
         setLastAction({ type: 'move', payload: { dx: 0, dy: -10 } });
         break;
       case 'ArrowDown':
-        setDesign(prev => moveShape(prev, selectedShapeId, 0, 10));
+        setDesign((prev: any) => moveShape(prev, selectedShapeId, 0, 10));
         setLastAction({ type: 'move', payload: { dx: 0, dy: 10 } });
         break;
       case 'r':
-        setDesign(prev => rotateShape(prev, selectedShapeId, 45));
+        setDesign((prev: any) => rotateShape(prev, selectedShapeId, 45));
         setLastAction({ type: 'rotate', payload: { angle: 45 } });
         break;
       case 'Delete':
       case 'Backspace':
-        setDesign(prev => ({
+        setDesign((prev: { shapes: any[]; }) => ({
           ...prev,
-          shapes: prev.shapes.filter(s => s.id !== selectedShapeId)
+          shapes: prev.shapes.filter((s: { id: string; }) => s.id !== selectedShapeId)
         }));
         setSelectedShapeId(null);
         break;
@@ -172,7 +173,7 @@ const Zentrix: React.FC = () => {
   }, [selectedShapeId]);
 
   const handleShapeDuplicate = useCallback((shapeId: string) => {
-    const originalShape = design.shapes.find(s => s.id === shapeId);
+    const originalShape = design.shapes.find((s: { id: string; }) => s.id === shapeId);
     if (!originalShape) return;
 
     const newShape = {
@@ -184,7 +185,7 @@ const Zentrix: React.FC = () => {
       }
     };
 
-    setDesign(prev => ({
+    setDesign((prev: { shapes: any; }) => ({
       ...prev,
       shapes: [...prev.shapes, newShape]
     }));
@@ -192,19 +193,19 @@ const Zentrix: React.FC = () => {
   }, [design.shapes]);
 
   const handleShapeRotate = useCallback((shapeId: string, angle: number) => {
-    setDesign(prev => rotateShape(prev, shapeId, angle));
+    setDesign((prev: any) => rotateShape(prev, shapeId, angle));
   }, []);
 
   const handleShapeDelete = useCallback((shapeId: string) => {
-    setDesign(prev => ({
+    setDesign((prev: { shapes: any[]; }) => ({
       ...prev,
-      shapes: prev.shapes.filter(s => s.id !== shapeId)
+      shapes: prev.shapes.filter((s: { id: string; }) => s.id !== shapeId)
     }));
     setSelectedShapeId(null);
   }, []);
 
   const handleLayerOrderChange = useCallback((shapeId: string, direction: 'up' | 'down') => {
-    setDesign(prev => {
+    setDesign((prev: { shapes: any; }) => {
       const shapes = [...prev.shapes];
       const index = shapes.findIndex(s => s.id === shapeId);
       if (index === -1) return prev;
@@ -230,9 +231,9 @@ const Zentrix: React.FC = () => {
   }, []);
 
   const handleShapeVisibilityToggle = useCallback((shapeId: string) => {
-    setDesign(prev => ({
+    setDesign((prev: { shapes: Shape[]; }) => ({
       ...prev,
-      shapes: prev.shapes.map(shape =>
+      shapes: prev.shapes.map((shape: Shape) =>
         shape.id === shapeId
           ? { ...shape, style: { ...shape.style, opacity: shape.style.opacity === 0 ? 1 : 0 } }
           : shape
@@ -240,8 +241,13 @@ const Zentrix: React.FC = () => {
     }));
   }, []);
 
-  const handleShapeUpdate = useCallback((shapeId: string, updates: Partial<ZentrixShape>) => {
-    setDesign(prev => updateShape(prev, shapeId, updates));
+  const handleShapeUpdate = useCallback((shapeId: string, updates: Partial<Shape>) => {
+    setDesign((prev: Design) => ({
+      ...prev,
+      shapes: prev.shapes.map((shape: Shape) =>
+        shape.id === shapeId ? { ...shape, ...updates } : shape
+      )
+    }));
   }, []);
 
   const handleSaveDesign = useCallback(() => {
@@ -268,7 +274,7 @@ const Zentrix: React.FC = () => {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const design = JSON.parse(e.target?.result as string) as ZentrixDesign;
+          const design = JSON.parse(e.target?.result as string) as Design;
           setDesign(design);
           setSelectedShapeId(null);
         } catch (err) {
@@ -291,11 +297,11 @@ const Zentrix: React.FC = () => {
     switch (lastAction.type) {
       case 'move':
         const { dx, dy } = lastAction.payload;
-        setDesign(prev => moveShape(prev, selectedShapeId, dx, dy));
+        setDesign((prev: any) => moveShape(prev, selectedShapeId, dx, dy));
         break;
       case 'rotate':
         const { angle } = lastAction.payload;
-        setDesign(prev => rotateShape(prev, selectedShapeId, angle));
+        setDesign((prev: any) => rotateShape(prev, selectedShapeId, angle));
         break;
       case 'duplicate':
         handleShapeDuplicate(selectedShapeId);
@@ -311,7 +317,7 @@ const Zentrix: React.FC = () => {
   // 단축키 등록
   useEffect(() => {
     if (!selectedShapeId) return;
-    const selectedShape = design.shapes.find(s => s.id === selectedShapeId);
+    const selectedShape = design.shapes.find((s: { id: string; }) => s.id === selectedShapeId);
     if (!selectedShape) return;
 
     keyboardManager.registerCommand(
@@ -480,50 +486,40 @@ const Zentrix: React.FC = () => {
 
   return (
     <div className="zentrix-layout zentrix-scrollbar">
-      <Suspense fallback={<LoadingComponent />}>
-        <MenuBar 
-          onNew={handleNewDesign}
-          onOpen={handleOpenDesign}
-          onSave={handleSaveDesign}
-          onExport={handleExportDesign}
-        />
-      </Suspense>
-      <Suspense fallback={<LoadingComponent />}>
-        <ComponentPanel
-          selectedTool={selectedTool}
-          onToolSelect={handleToolSelect}
-        />
-      </Suspense>
-      <Suspense fallback={<LoadingComponent />}>
-        <LayerPanel
-          shapes={design.shapes}
-          selectedShapeId={selectedShapeId}
-          onSelectShape={setSelectedShapeId}
-          onLayerOrderChange={handleLayerOrderChange}
-          onShapeVisibilityToggle={handleShapeVisibilityToggle}
-        />
-      </Suspense>
+      <MenuBar 
+        onNew={handleNewDesign}
+        onOpen={handleOpenDesign}
+        onSave={handleSaveDesign}
+        onExport={handleExportDesign}
+      />
+      <ComponentPanel
+        selectedTool={selectedTool}
+        onToolSelect={handleToolSelect}
+      />
+      <LayerPanel
+        shapes={design.shapes}
+        selectedShapeId={selectedShapeId}
+        onSelectShape={setSelectedShapeId}
+        onLayerOrderChange={handleLayerOrderChange}
+        onShapeVisibilityToggle={handleShapeVisibilityToggle}
+      />
       <main className="zentrix-content">
         {['shape', 'text'].includes(selectedTool) && (
-          <Suspense fallback={<LoadingComponent />}>
-            <Toolbar
-              selectedTool={selectedTool}
-              onToolSelect={handleToolSelect}
-            />
-          </Suspense>
+          <Toolbar
+            selectedTool={selectedTool}
+            onToolSelect={handleToolSelect}
+          />
         )}
         <div className="zentrix-container">
-          <Suspense fallback={<LoadingComponent />}>
-            <ZentrixCanvas
-              design={design}
-              onShapeClick={setSelectedShapeId}
-              onShapeDelete={handleShapeDelete}
-              onShapeRotate={handleShapeRotate}
-              onShapeDuplicate={handleShapeDuplicate}
-              onShapeUpdate={handleShapeUpdate}
-              selectedShapeId={selectedShapeId}
-            />
-          </Suspense>
+          <ZentrixCanvas
+            design={design}
+            onShapeClick={setSelectedShapeId}
+            onShapeDelete={handleShapeDelete}
+            onShapeRotate={handleShapeRotate}
+            onShapeDuplicate={handleShapeDuplicate}
+            onShapeUpdate={handleShapeUpdate}
+            selectedShapeId={selectedShapeId}
+          />
         </div>
       </main>
       {selectedShapeId && (
@@ -541,9 +537,7 @@ const Zentrix: React.FC = () => {
           onCancel={() => setShowNewDesignDialog(false)}
         />
       )}
-      <Suspense fallback={<LoadingComponent />}>
-        <KeyboardShortcuts shortcuts={[]} />
-      </Suspense>
+      <KeyboardShortcuts shortcuts={[]} />
     </div>
   );
 };

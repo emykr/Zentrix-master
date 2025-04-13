@@ -1,7 +1,9 @@
 import React from 'react';
+import type { Shape } from '@/types';
+import { t } from '@utils/LangLoader';
 
 interface LayerPanelProps {
-  shapes: ZentrixShape[];
+  shapes: Shape[];
   selectedShapeId: string | null;
   onSelectShape: (shapeId: string | null) => void;
   onLayerOrderChange: (shapeId: string, direction: 'up' | 'down') => void;
@@ -31,14 +33,13 @@ const LayerPanel: React.FC<LayerPanelProps> = ({
   const handleLayerClick = (shapeId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    // 이벤트 객체와 함께 전달
+
     onSelectShape(shapeId);
   };
 
   return (
     <div className="ui-panel layer-panel">
-      <h2 className="panel-title">레이어</h2>
+      <h2 className="panel-title">{t('layerPanel.title')}</h2>
       <div className="layer-list">
         {shapes.map(shape => (
           <div
@@ -53,12 +54,12 @@ const LayerPanel: React.FC<LayerPanelProps> = ({
                   e.stopPropagation();
                   onShapeVisibilityToggle(shape.id);
                 }}
-                title={shape.style.opacity === 0 ? "보이기" : "숨기기"}
+                title={shape.style.opacity === 0 ? t('layerPanel.show') : t('layerPanel.hide')}
               >
                 <VisibilityIcon isVisible={shape.style.opacity !== 0} />
               </button>
               <span className="layer-name">
-                {shape.type === 'group' ? '그룹' : shape.type} {shape.id.slice(0, 4)}
+                {shape.type === 'group' ? t('layerPanel.group') : shape.type} {shape.id.slice(0, 4)}
               </span>
             </div>
             <div className="layer-controls">
@@ -69,7 +70,7 @@ const LayerPanel: React.FC<LayerPanelProps> = ({
                 }}
                 disabled={shapes.indexOf(shape) === shapes.length - 1}
               >
-                ↑
+                {t('layerPanel.moveUp')}
               </button>
               <button
                 onClick={(e) => {
@@ -78,7 +79,7 @@ const LayerPanel: React.FC<LayerPanelProps> = ({
                 }}
                 disabled={shapes.indexOf(shape) === 0}
               >
-                ↓
+                {t('layerPanel.moveDown')}
               </button>
             </div>
           </div>

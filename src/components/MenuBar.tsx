@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { t } from '@utils/LangLoader';
 
 interface MenuItem {
   label: string;
@@ -22,28 +23,28 @@ const MenuBar: React.FC<MenuBarProps> = ({
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const menus: Record<string, MenuItem[]> = {
-    '파일': [
-      { label: '새로 만들기', onClick: onNew },
-      { label: '열기...', onClick: onOpen },
-      { label: '저장', onClick: onSave },
-      { label: '내보내기...', onClick: onExport }
+    [t('menu.file')]: [
+      { label: t('menu.file.new'), onClick: onNew },
+      { label: t('menu.file.open'), onClick: onOpen },
+      { label: t('menu.file.save'), onClick: onSave },
+      { label: t('menu.file.export'), onClick: onExport }
     ],
-    '편집': [
-      { label: '실행 취소' },
-      { label: '다시 실행' },
-      { label: '잘라내기' },
-      { label: '복사' },
-      { label: '붙여넣기' }
+    [t('menu.edit')]: [
+      { label: t('menu.edit.undo') },
+      { label: t('menu.edit.redo') },
+      { label: t('menu.edit.cut') },
+      { label: t('menu.edit.copy') },
+      { label: t('menu.edit.paste') }
     ],
-    '보기': [
-      { label: '확대' },
-      { label: '축소' },
-      { label: '화면에 맞추기' },
-      { label: '실제 크기' }
+    [t('menu.view')]: [
+      { label: t('menu.view.zoomIn') },
+      { label: t('menu.view.zoomOut') },
+      { label: t('menu.view.fitToScreen') },
+      { label: t('menu.view.actualSize') }
     ],
-    '도움말': [
-      { label: '단축키 안내' },
-      { label: '버전 정보' }
+    [t('menu.help')]: [
+      { label: t('menu.help.shortcuts') },
+      { label: t('menu.help.about') }
     ]
   };
 
@@ -93,6 +94,6 @@ const MenuBar: React.FC<MenuBarProps> = ({
       </div>
     </div>
   );
-};
+  };
 
-export default MenuBar;
+  export default MenuBar;

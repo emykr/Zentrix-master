@@ -1,4 +1,6 @@
 import React from 'react';
+import { t } from '@utils/LangLoader';
+import type { ShapeStyle } from '@/types/zentrix';
 
 interface TextPropertiesProps {
   style: ShapeStyle;
@@ -10,22 +12,23 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
   onUpdate
 }) => {
   const fontFamilies = [
-    { value: 'Noto Sans KR', label: '본고딕' },
-    { value: 'Nanum Gothic', label: '나눔고딕' },
-    { value: 'Nanum Myeongjo', label: '나눔명조' },
-    { value: 'Malgun Gothic', label: '맑은 고딕' },
-    { value: 'Batang', label: '바탕' },
-    { value: 'Dotum', label: '돋움' },
-    { value: 'Gulim', label: '굴림' },
-    { value: 'Arial', label: 'Arial' },
-    { value: 'Times New Roman', label: 'Times New Roman' }
+    { value: 'Noto Sans KR', label: t('fontFamilies.notoSansKR') },
+    { value: 'Nanum Gothic', label: t('fontFamilies.nanumGothic') },
+    { value: 'Nanum Myeongjo', label: t('fontFamilies.nanumMyeongjo') },
+    { value: 'Malgun Gothic', label: t('fontFamilies.malgunGothic') },
+    { value: 'Batang', label: t('fontFamilies.batang') },
+    { value: 'Dotum', label: t('fontFamilies.dotum') },
+    { value: 'Gulim', label: t('fontFamilies.gulim') },
+    { value: 'Arial', label: t('fontFamilies.arial') },
+    { value: 'Times New Roman', label: t('fontFamilies.timesNewRoman') }
   ];
 
   const fontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
 
   return (
-    <div className="text-properties-panel ui-panel">
-      <div className="panel-section">
+    <div className="text-properties-panel">
+      <div className="panel-section bg-gradient-to-br from-gray-800/90 to-gray-900/90 
+                      rounded-2xl border border-white/10 p-4">
         <div className="flex gap-2 items-center mb-4">
           <select
             value={style.fontFamily || 'Malgun Gothic'}
@@ -51,7 +54,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.bold ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ bold: !style.bold })}
-            title="굵게"
+            title={t('textProperties.bold')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
@@ -61,7 +64,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.italic ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ italic: !style.italic })}
-            title="기울임"
+            title={t('textProperties.italic')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="19" y1="4" x2="10" y2="4"/>
@@ -72,7 +75,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.underline ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ underline: !style.underline })}
-            title="밑줄"
+            title={t('textProperties.underline')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/>
@@ -82,7 +85,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.strikethrough ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ strikethrough: !style.strikethrough })}
-            title="취소선"
+            title={t('textProperties.strikethrough')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="4" y1="12" x2="20" y2="12"/>
@@ -95,7 +98,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.textAlign === 'left' ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ textAlign: 'left' })}
-            title="왼쪽 정렬"
+            title={t('textProperties.alignLeft')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -106,7 +109,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.textAlign === 'center' ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ textAlign: 'center' })}
-            title="가운데 정렬"
+            title={t('textProperties.alignCenter')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -117,7 +120,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.textAlign === 'right' ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ textAlign: 'right' })}
-            title="오른쪽 정렬"
+            title={t('textProperties.alignRight')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -128,7 +131,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
           <button
             className={`p-2 rounded ${style.textAlign === 'justify' ? 'bg-blue-500' : 'bg-slate-700'}`}
             onClick={() => onUpdate({ textAlign: 'justify' })}
-            title="양쪽 정렬"
+            title={t('textProperties.alignJustify')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -140,7 +143,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
 
         <div className="flex gap-4 items-center">
           <div>
-            <label className="text-sm text-white/70">글자 색상</label>
+            <label className="text-sm text-white/70">{t('textProperties.textColor')}</label>
             <input
               type="color"
               value={style.textColor || '#000000'}
@@ -149,7 +152,7 @@ export const TextPropertiesPanel: React.FC<TextPropertiesProps> = ({
             />
           </div>
           <div>
-            <label className="text-sm text-white/70">배경 색상</label>
+            <label className="text-sm text-white/70">{t('textProperties.backgroundColor')}</label>
             <input
               type="color"
               value={style.backgroundColor || '#ffffff'}

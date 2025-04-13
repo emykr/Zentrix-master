@@ -4,9 +4,12 @@ import { Grid } from './Grid';
 import { t } from '@utils/LangLoader';
 import { getPortPosition, calculateConnectorPath, createConnector } from '@utils/DesignUtils';
 import { TextEditor } from './TextEditor';
+import type { Point, Shape, ShapeStyle, Design, ConnectorShape, ConnectorPoint, Gradient, GradientStop, Port } from '@/types/zentrix';
 
 // DragPoint 타입 정의
 interface DragPoint extends Point {
+  x: number;
+  y: number;
   shapeId?: string;
   portId?: string;
 }
@@ -21,12 +24,12 @@ interface MenuItem {
 }
 
 interface ZentrixCanvasProps {
-  design: ZentrixDesign;
+  design: Design;
   onShapeClick?: (shapeId: string | null, e?: React.MouseEvent) => void;
   onShapeDelete?: (shapeId: string) => void;
   onShapeRotate?: (shapeId: string, angle: number) => void;
   onShapeDuplicate?: (shapeId: string) => void;
-  onShapeUpdate?: (shapeId: string, updates: Partial<ZentrixShape>) => void;
+  onShapeUpdate?: (shapeId: string, updates: Partial<Shape>) => void;
   selectedShapeId?: string | null;
 }
 
@@ -47,8 +50,8 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
   } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<DragPoint | null>(null);
-  const [originalShape, setOriginalShape] = useState<ZentrixShape | null>(null);
-  const [editingText, setEditingText] = useState<ZentrixShape | null>(null);
+  const [originalShape, setOriginalShape] = useState<Shape | null>(null);
+  const [editingText, setEditingText] = useState<Shape | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -63,27 +66,28 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     ctx.fillRect(0, 0, design.canvas.width, design.canvas.height);
 
     // 모든 도형 렌더링
-    design.shapes.forEach(shape => {
-      renderShape(ctx, shape);
+    design.shapes.forEach((s: Shape) => renderShape(ctx, s));
       
-      // 선택된 도형의 경계 상자와 핸들 렌더링
-      if (selectedShapeId === shape.id) {
+    // 선택된 도형의 경계 상자와 핸들 렌더링
+    if (selectedShapeId) {
+      const shape = design.shapes.find((s: Shape) => s.id === selectedShapeId);
+      if (shape) {
         renderBoundingBox(ctx, shape);
         renderTransformHandles(ctx, shape);
       }
-    });
+    }
   }, [design, selectedShapeId]);
 
   useEffect(() => {
     if (contextMenu) {
-      const shape = design.shapes.find(s => s.id === contextMenu.shapeId);
+      const shape = design.shapes.find((s: Shape) => s.id === contextMenu.shapeId);
       if (!shape) {
         setContextMenu(null);
       }
     }
     
     if (editingText) {
-      const shape = design.shapes.find(s => s.id === editingText.id);
+      const shape = design.shapes.find((s: Shape) => s.id === editingText.id);
       if (!shape) {
         setEditingText(null);
       }
@@ -164,9 +168,9 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     
     // 포트 클릭 체크
     if (selectedShapeId) {
-      const selectedShape = design.shapes.find(s => s.id === selectedShapeId);
+      const selectedShape = design.shapes.find((s: Shape) => s.id === selectedShapeId);
       if (selectedShape?.ports) {
-        for (const port of selectedShape.ports) {
+        for (const port of selectedShape.ports as Port[]) {
           const portPos = getPortPosition(selectedShape, port.id);
           const distance = Math.sqrt(
             Math.pow(portPos.x - x, 2) + Math.pow(portPos.y - y, 2)
@@ -218,7 +222,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
       if (!ctx) return;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      design.shapes.forEach(shape => renderShape(ctx, shape));
+      design.shapes.forEach((s: Shape) => renderShape(ctx, s));
 
       ctx.beginPath();
       ctx.moveTo(dragStart.x, dragStart.y);
@@ -310,7 +314,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     }
   };
 
-  const isPointInShape = (x: number, y: number, shape: ZentrixShape): boolean => {
+  const isPointInShape = (x: number, y: number, shape: Shape): boolean => {
     const { position, size } = shape;
 
     switch (shape.type) {
@@ -368,7 +372,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
   };
 
   const getContextMenuItems = (shapeId: string): MenuItem[] => {
-    const shape = design.shapes.find(s => s.id === shapeId);
+    const shape = design.shapes.find((s: Shape) => s.id === shapeId);
     if (!shape) {
       setContextMenu(null);
       return [];
@@ -377,7 +381,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     const menuItems: MenuItem[] = [
       {
         id: 'duplicate',
-        label: '복제',
+        label: t('menu.context.duplicate'),
         shortcut: 'Ctrl+D',
         onClick: () => onShapeDuplicate?.(shapeId)
       }
@@ -395,7 +399,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     menuItems.push(
       {
         id: 'rotate',
-        label: '90도 회전',
+        label: t('menu.context.rotate90'),
         shortcut: 'R',
         onClick: () => onShapeRotate?.(shapeId, 90)
       },
@@ -406,7 +410,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
       },
       {
         id: 'delete',
-        label: '삭제',
+        label: t('menu.context.delete'),
         shortcut: 'Delete',
         onClick: () => onShapeDelete?.(shapeId)
       }
@@ -415,7 +419,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     return menuItems;
   };
 
-  const renderShape = (ctx: CanvasRenderingContext2D, shape: ZentrixShape) => {
+  const renderShape = (ctx: CanvasRenderingContext2D, shape: Shape) => {
     ctx.save();
 
     // Transform 적용
@@ -449,18 +453,16 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
         ctx.setLineDash([]);
 
         // 자식 도형들 렌더링
-        if (shape.children) {
-          shape.children.forEach(child => {
-            const childInGroup = {
-              ...child,
-              position: {
-                x: shape.position.x + child.position.x,
-                y: shape.position.y + child.position.y
-              }
-            };
-            renderShape(ctx, childInGroup);
-          });
-        }
+        shape.children?.forEach((child: Shape) => {
+          const childInGroup = {
+            ...child,
+            position: {
+              x: shape.position.x + child.position.x,
+              y: shape.position.y + child.position.y
+            }
+          };
+          renderShape(ctx, childInGroup);
+        });
         break;
       case 'text':
         const textStyle = shape.style;
@@ -486,7 +488,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
         const lineHeight = textStyle.lineHeight || 1.5;
         const lines = (shape.text || '').split('\n');
 
-        lines.forEach((line, index) => {
+        lines.forEach((line: string, index: number) => {
           let x = shape.position.x;
           if (textStyle.textAlign === 'center') {
             x = shape.position.x + shape.size.width / 2;
@@ -499,7 +501,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
 
         if (textStyle.underline || textStyle.strikethrough) {
           ctx.beginPath();
-          lines.forEach((line, index) => {
+          lines.forEach((line: string, index: number) => {
             const metrics = ctx.measureText(line);
             const lineWidth = metrics.width;
             let startX = shape.position.x;
@@ -572,8 +574,8 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
         break;
       case 'connector':
         const connector = shape as ConnectorShape;
-        const sourceShape = design.shapes.find(s => s.id === connector.source.shapeId);
-        const targetShape = design.shapes.find(s => s.id === connector.target.shapeId);
+        const sourceShape = design.shapes.find((s: Shape) => s.id === connector.source.shapeId);
+        const targetShape = design.shapes.find((s: Shape) => s.id === connector.target.shapeId);
         
         if (!sourceShape || !targetShape) return;
         
@@ -636,7 +638,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     ctx.restore();
   };
 
-  const renderBoundingBox = (ctx: CanvasRenderingContext2D, shape: ZentrixShape) => {
+  const renderBoundingBox = (ctx: CanvasRenderingContext2D, shape: Shape) => {
     ctx.save();
     ctx.strokeStyle = '#2196f3';
     ctx.lineWidth = 1;
@@ -656,7 +658,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     ctx.restore();
   };
 
-  const renderTransformHandles = (ctx: CanvasRenderingContext2D, shape: ZentrixShape) => {
+  const renderTransformHandles = (ctx: CanvasRenderingContext2D, shape: Shape) => {
     ctx.save();
     ctx.fillStyle = '#ffffff';
     ctx.strokeStyle = '#2196f3';
@@ -708,7 +710,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     ctx.restore();
   };
 
-  const renderPorts = (ctx: CanvasRenderingContext2D, shape: ZentrixShape) => {
+  const renderPorts = (ctx: CanvasRenderingContext2D, shape: Shape) => {
     if (!shape.ports || shape.type === 'connector') return;
 
     ctx.save();
@@ -716,8 +718,8 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
     ctx.strokeStyle = '#2196f3';
     ctx.lineWidth = 2;
 
-    shape.ports.forEach(port => {
-      const pos = getPortPosition(shape, port.id);
+    shape.ports.forEach((port: Port) => {
+      const pos: Point = getPortPosition(shape, port.id);
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
       ctx.fill();
@@ -784,7 +786,7 @@ const ZentrixCanvas: React.FC<ZentrixCanvasProps> = ({
       );
     }
 
-    gradient.stops.forEach(stop => {
+    gradient.stops.forEach((stop: GradientStop) => {
       canvasGradient.addColorStop(stop.offset, stop.color);
     });
 

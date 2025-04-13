@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
+import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { config } from './config.mjs';  // .mjs로 변경
-
-const __filename = fileURLToPath(import.meta.url);
+const __filename = path.resolve();
 const __dirname = path.dirname(__filename);
 
 interface Font {
@@ -25,7 +23,8 @@ const fonts: Font[] = [
   }
 ];
 
-app.use('/fonts', express.static(path.join(__dirname, '../../assets/fonts')));
+const assetsPath = path.resolve(process.cwd(), 'assets/fonts');
+app.use('/fonts', express.static(assetsPath));
 
 app.get('/api/fonts', (req, res) => {
   res.json(fonts);
@@ -35,8 +34,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-const server = app.listen(config.ports.fonts, () => {
-  console.log(`Font server running on port ${config.ports.fonts}`);
+const PORT = 3001; // Font 서버 포트
+const server = app.listen(PORT, () => {
+  console.log(`Font server running on port ${PORT}`);
 });
 
 export default app;

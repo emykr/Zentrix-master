@@ -64,12 +64,12 @@ class LangLoader {
   t(key: string): string {
     const keys = key.split('.');
     let current: any = this.langData[this.currentLang];
-    
+
     if (!current) {
       console.warn(`Language data not loaded for ${this.currentLang}`);
       return key;
     }
-    
+
     for (const k of keys) {
       if (current[k] === undefined) {
         console.warn(`Translation key not found: ${key}`);
@@ -77,7 +77,7 @@ class LangLoader {
       }
       current = current[k];
     }
-    
+
     return current;
   }
 }

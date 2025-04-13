@@ -75,13 +75,13 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ error, onContinue 
             
             {/* 서버 상태 표시 */}
             <div className="mt-4 space-y-2 bg-slate-800 p-4 rounded-lg">
-              <p className="text-white text-sm font-medium mb-2">서버 상태</p>
+              <p className="text-white text-sm font-medium mb-2">{t('loadingScreen.serverStatus')}</p>
               {serverStatuses.map((server) => (
                 <div key={server.name} className="flex justify-between items-center">
-                  <span className="text-white/70">{server.name}</span>
+                  <span className="text-white/70">{t(`serverNames.${server.name}`)}</span>
                   <span className={getStatusColor(server.status)}>
-                    {server.status === 'online' ? '온라인' : 
-                     server.status === 'offline' ? '오프라인' : '확인 중'}
+                    {server.status === 'online' ? t('serverStatus.online') : 
+                     server.status === 'offline' ? t('serverStatus.offline') : t('serverStatus.checking')}
                   </span>
                 </div>
               ))}

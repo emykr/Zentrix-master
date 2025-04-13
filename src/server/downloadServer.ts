@@ -1,10 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { config } from './config.mjs';  // .mjs로 변경
+import * as path from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
+
+const __filename = path.resolve();
 const __dirname = path.dirname(__filename);
 
 const app = express();
@@ -16,8 +15,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-const server = app.listen(config.ports.download, () => {
-  console.log(`Download server running on port ${config.ports.download}`);
+const PORT = 3003; // Download 서버 포트
+const server = app.listen(PORT, () => {
+  console.log(`Download server running on port ${PORT}`);
 });
 
 export default app;

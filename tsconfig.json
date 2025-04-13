@@ -27,7 +27,8 @@
       "@pages/*": ["pages/*"],
       "@assets/*": ["assets/*"],
       "@lang/*": ["lang/*"],
-      "@handler/*": ["handler/*"]
+      "@handler/*": ["handler/*"],
+      "@/types/*": ["types/*"]
     }
   },
   "include": ["src/**/*"],
